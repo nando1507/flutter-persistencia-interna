@@ -1,9 +1,10 @@
+import 'package:bytebank_persistencia/database/app_database.dart';
 import 'package:bytebank_persistencia/models/contact.dart';
 import 'package:bytebank_persistencia/screens/contact_form.dart';
 import 'package:flutter/material.dart';
 
 class ContactList extends StatefulWidget {
-  final List<Contact> _contatos = [];
+  //final List<Contact> _contatos = [];
 
   @override
   State<ContactList> createState() => _ContactListState();
@@ -19,11 +20,30 @@ class _ContactListState extends State<ContactList> {
           textDirection: TextDirection.ltr,
         ),
       ),
-      body: ListView.builder(
-        itemCount: widget._contatos.length,
-        itemBuilder: (context, indice) {
-          final contatos = widget._contatos[indice];
-          return ItemContato(contatos);
+      body: FutureBuilder<List<Contact>>(
+        initialData: [],
+        future: Future.delayed(const Duration(milliseconds: 250)).then((value) => findAll()),
+        builder: (context, snapshot) {
+          if (snapshot.data != null) {
+            final List<Contact> contatos = snapshot.data as List<Contact>;
+            return ListView.builder(
+              itemCount: contatos.length,
+              itemBuilder: (context, indice) {
+                final contacts = contatos[indice];
+                return ItemContato(contacts);
+              },
+            );
+          }
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const <Widget>[
+                CircularProgressIndicator(),
+                Text('Loading', textDirection: TextDirection.ltr,)
+              ],
+            ),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -31,22 +51,22 @@ class _ContactListState extends State<ContactList> {
           final Future<Contact?> future = Navigator.push(context, MaterialPageRoute(builder: (context) {
             return ContactForm();
           }));
-          future.then((newContact) => _atualizaContato(newContact));
+          //future.then((newContact) => _atualizaContato(newContact));
         },
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  void _atualizaContato(Contact? contato) {
-    Future.delayed(const Duration(milliseconds: 250), () {
-      if (contato != null) {
-        setState(() {
-          widget._contatos.add(contato);
-        });
-      }
-    });
-  }
+//   void _atualizaContato(Contact? contato) {
+//     Future.delayed(const Duration(milliseconds: 250), () {
+//       if (contato != null) {
+//         setState(() {
+//           widget._contatos.add(contato);
+//         });
+//       }
+//     });
+//   }
 }
 
 class ItemContato extends StatelessWidget {
