@@ -1,9 +1,12 @@
-import 'package:bytebank_persistencia/database/app_database.dart';
+
+import 'package:bytebank_persistencia/database/dao/contact_dao.dart';
 import 'package:bytebank_persistencia/models/contact.dart';
 import 'package:bytebank_persistencia/screens/contact_form.dart';
 import 'package:flutter/material.dart';
 
 class ContactList extends StatefulWidget {
+  const ContactList({Key? key}) : super(key: key);
+
   //final List<Contact> _contatos = [];
 
   @override
@@ -11,6 +14,8 @@ class ContactList extends StatefulWidget {
 }
 
 class _ContactListState extends State<ContactList> {
+
+  final ContactDao _dao = ContactDao();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,8 +26,8 @@ class _ContactListState extends State<ContactList> {
         ),
       ),
       body: FutureBuilder<List<Contact>>(
-        initialData: [],
-        future: Future.delayed(const Duration(milliseconds: 250)).then((value) => findAll()),
+        initialData: const [],
+        future: Future.delayed(const Duration(milliseconds: 250)).then((id) => _dao.findAll()),
         builder: (context, snapshot) {
           // switch(snapshot.connectionState){
           //   case ConnectionState.none:
@@ -54,7 +59,10 @@ class _ContactListState extends State<ContactList> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: const <Widget>[
                 CircularProgressIndicator(),
-                Text('Loading', textDirection: TextDirection.ltr,)
+                Text(
+                  'Loading',
+                  textDirection: TextDirection.ltr,
+                )
               ],
             ),
           );
@@ -62,25 +70,20 @@ class _ContactListState extends State<ContactList> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          final Future<Contact?> future = Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return ContactForm();
-          }));
-          //future.then((newContact) => _atualizaContato(newContact));
+          Navigator.of(context)
+              .push(
+            MaterialPageRoute(
+              builder: (context) => const ContactForm(),
+            ),
+          )
+              .then((value) {
+            setState(() {});
+          });
         },
         child: const Icon(Icons.add),
       ),
     );
   }
-
-//   void _atualizaContato(Contact? contato) {
-//     Future.delayed(const Duration(milliseconds: 250), () {
-//       if (contato != null) {
-//         setState(() {
-//           widget._contatos.add(contato);
-//         });
-//       }
-//     });
-//   }
 }
 
 class ItemContato extends StatelessWidget {
