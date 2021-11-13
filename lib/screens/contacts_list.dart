@@ -24,6 +24,20 @@ class _ContactListState extends State<ContactList> {
         initialData: [],
         future: Future.delayed(const Duration(milliseconds: 250)).then((value) => findAll()),
         builder: (context, snapshot) {
+          // switch(snapshot.connectionState){
+          //   case ConnectionState.none:
+          //     // TODO: Handle this case.
+          //     break;
+          //   case ConnectionState.waiting:
+          //     // TODO: Handle this case.
+          //     break;
+          //   case ConnectionState.active:
+          //     // TODO: Handle this case.
+          //     break;
+          //   case ConnectionState.done:
+          //     // TODO: Handle this case.
+          //     break;
+          // }
           if (snapshot.data != null) {
             final List<Contact> contatos = snapshot.data as List<Contact>;
             return ListView.builder(
